@@ -47,7 +47,7 @@ pub contract Market {
    // of the tokens gets taken from the purchase
    pub resource SaleCollection: SalePublic {
 
-      // A collection of the moments that the user has for sale
+      // A collection of the nfts that the user has for sale
       access(self) var ownerCollection: Capability<&{NonFungibleToken.Provider,NonFungibleToken.CollectionPublic}>
 
       // Dictionary of the low prices for each NFT by ID
@@ -71,9 +71,9 @@ pub contract Market {
 
       init (ownerCollection: Capability<&{NonFungibleToken.Provider,NonFungibleToken.CollectionPublic}>, ownerCapability: Capability<&{FungibleToken.Receiver}>, tokenAddress: Address, beneficiaryCapability: Capability<&{FungibleToken.Receiver}>, cutPercentage: UFix64) {
             pre {
-               // Check that the owner's moment collection capability is correct
+               // Check that the owner's nft collection capability is correct
                ownerCollection.borrow() != nil: 
-                  "Owner's Moment Collection Capability is invalid!"
+                  "Owner's NFT Collection Capability is invalid!"
 
                // Check that both capabilities are for fungible token Vault receivers
                ownerCapability.borrow() != nil: 
@@ -82,12 +82,12 @@ pub contract Market {
                   "Beneficiary's Receiver Capability is invalid!" 
             }
 
-            // create an empty collection to store the moments that are for sale
+            // create an empty collection to store the nfts that are for sale
             self.ownerCollection = ownerCollection
             self.ownerCapability = ownerCapability
             self.beneficiaryCapability = beneficiaryCapability
             self.tokenAddress = tokenAddress
-            // prices are initially empty because there are no moments for sale
+            // prices are initially empty because there are no nfts for sale
             self.prices = {}
             self.cutPercentage = cutPercentage
       }
@@ -109,7 +109,7 @@ pub contract Market {
             emit NFTListed(id: tokenID, price: price, seller: self.owner?.address, tokenAddress: self.tokenAddress)
       }
 
-      // cancelSale cancels a moment sale and clears its price
+      // cancelSale cancels a nft sale and clears its price
       //
       // Parameters: tokenID: the ID of the token to withdraw from the sale
       //
@@ -124,7 +124,7 @@ pub contract Market {
             // Set prices to nil for the withdrawn ID
             self.prices[tokenID] = nil
 
-            // Emit the event for withdrawing a moment from the Sale
+            // Emit the event for withdrawing an nft from the Sale
             emit NFTWithdrawn(id: tokenID, owner: self.owner?.address, tokenAddress: self.tokenAddress)
       }
 
