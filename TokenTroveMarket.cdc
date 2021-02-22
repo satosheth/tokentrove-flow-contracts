@@ -168,6 +168,16 @@ pub contract TokenTroveMarket {
             return <-boughtNFT
       }
 
+      pub fun changePrice(tokenID: UInt64, newPrice: UFix64) {
+         pre {
+             self.prices[tokenID] != nil: "Cannot change the price for a token that is not for sale"
+         }
+         // set the new price
+         self.prices[tokenID] = newPrice
+
+         emit NFTPriceChanged(id: tokenID, newPrice: newPrice, seller: self.owner?.address, tokenAddress: self.tokenAddress)
+      }
+           
       // changePercentage changes the cut percentage of the tokens that are for sale
       //
       // Parameters: newPercent: The new cut percentage for the sale
